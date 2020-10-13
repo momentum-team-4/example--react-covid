@@ -2,3 +2,15 @@
   max-width: 60rem;
   margin: 2rem auto;
 }
+
+.link-button {
+  border-width: 0;
+  background-color: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  color: blue;
+}
+
+.link-button:hover {
+  text-decoration: underline;
+}

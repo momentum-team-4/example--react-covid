@@ -1,6 +1,7 @@
 /* globals fetch */
 
 import React, { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 
 function formatDate (date) {
   return new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
@@ -8,17 +9,21 @@ function formatDate (date) {
     .split('T')[0]
 }
 
-export default function CountryData (props) {
-  const { country } = props
+export default function CountryData () {
   const [casesByDay, setCasesByDay] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [countryName, setCountryName] = useState(null)
+  const { slug } = useParams()
 
   useEffect(() => {
     setCasesByDay([])
-    if (!country) { return }
-    fetch(`https://api.covid19api.com/dayone/country/${country.Slug}/status/confirmed`)
+
+    fetch(`https://api.covid19api.com/dayone/country/${slug}/status/confirmed`)
       .then(res => res.json())
       .then(data => {
+        if (data.length > 0) {
+          setCountryName(data[0].Country)
+        }
         const days = data.map(day => {
           return {
             date: new Date(day.Date),
@@ -28,7 +33,7 @@ export default function CountryData (props) {
         })
         setCasesByDay(days)
       })
-  }, [country])
+  }, [slug])
 
   let day
   if (casesByDay.length > 0) {
@@ -37,7 +42,7 @@ export default function CountryData (props) {
 
   return (
     <div className='CountryData'>
-      <h1>{country.Country}</h1>
+      <h1>{countryName}</h1>
 
       {day && (
         <div>

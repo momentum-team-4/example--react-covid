@@ -1,55 +1,35 @@
-/* globals fetch */
-
-import React, { useState, useEffect } from 'react'
+import React from 'react'
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import './App.css'
+import Home from './components/Home'
+import About from './components/About'
 import CountryData from './components/CountryData'
+import 'tachyons'
 
 function App () {
-  const [countries, setCountries] = useState([])
-  const [selectedCountry, setSelectedCountry] = useState(null)
-
-  useEffect(() => {
-    fetch('https://api.covid19api.com/countries')
-      .then(response => response.json())
-      .then(data => {
-        data.sort((a, b) => {
-          if (a.Country < b.Country) {
-            return -1
-          } else if (a.Country > b.Country) {
-            return 1
-          } else {
-            return 0
-          }
-        })
-        setCountries(data)
-      })
-  }, [])
-
-  if (selectedCountry) {
-    return (
-      <div className='App'>
-        <CountryData country={selectedCountry} />
-        <div>
-          <button className='link-button' onClick={() => setSelectedCountry(null)}>
-          Go back to all countries
-          </button>
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <div className='App'>
-      <ul>
-        {countries.map(country => (
-          <li key={country.ISO2}>
-            <button className='link-button' onClick={() => setSelectedCountry(country)}>
-              {country.Country}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Router>
+      <div className='App ph3 mw8 mv4 center sans-serif'>
+        <header className='bg-blue white pv2 ph3'>
+          <h1>COVID-19 Statistics</h1>
+          <ul className='list ph0 pv1'>
+            <li className='dib mr2'><Link className='white' to='/'>Home</Link></li>
+            <li className='dib mr2'><Link className='white' to='/about'>About</Link></li>
+          </ul>
+        </header>
+        <Switch>
+          <Route path='/country/:slug'>
+            <CountryData />
+          </Route>
+          <Route path='/about'>
+            <About />
+          </Route>
+          <Route path='/'>
+            <Home />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
   )
 }
 
